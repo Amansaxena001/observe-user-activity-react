@@ -1,0 +1,11 @@
+{
+  "name": "viewport-observer",
+  "version": "1.0.0",
+  "description": "Observe the user activity which items your customers are viewing",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Aman Saxena",
+  "license": "ISC"
+}
