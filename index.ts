@@ -12,10 +12,10 @@ const inViewPort = (el: Element) => {
     );
 };
 
-const detectInViewPort = (blocks): Element[] => {
+const detectInViewPort = (blockId: string): Element[] => {
     const result: Element[] = [];
 
-    const blocksToObserve = document.querySelectorAll(`.${blocks}`);
+    const blocksToObserve = document.querySelectorAll(`.${blockId}`);
     blocksToObserve.forEach((el: Element) => {
         if (inViewPort(el)) {
             result.push(el);
@@ -37,4 +37,21 @@ const debounce = (fn, delay) => {
 
 const debouncedDetect = debounce(detectInViewPort, 1000);
 
-window.addEventListener('scroll', debouncedDetect, false);
+const observeViewPort = (id: string): void => {
+    if (typeof window !== 'undefined') {
+        window.addEventListener('scroll', () => debouncedDetect(id), false);
+    }
+};
+
+const stopObserve = (): void => {
+    window.removeEventListener('scroll', debouncedDetect, false);
+};
+
+// test fn
+const test = (id) => console.log(id, 'Successfully imported and running');
+
+module.exports = {
+    observeViewPort,
+    stopObserve,
+    test,
+};
