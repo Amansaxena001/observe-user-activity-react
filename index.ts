@@ -1,3 +1,5 @@
+import { debounce } from "./utils";
+
 const inViewPort = (el: Element) => {
     const elementPosition = el.getBoundingClientRect();
 
@@ -12,37 +14,36 @@ const inViewPort = (el: Element) => {
     );
 };
 
-const detectInViewPort = (blockId: string): Element[] => {
+const detectInViewPort = (cb:Function,id:string):void => {
     const result: Element[] = [];
 
-    const blocksToObserve = document.querySelectorAll(`.${blockId}`);
-    blocksToObserve.forEach((el: Element) => {
+    const parent:HTMLElement=document.getElementById(id);
+
+    const blocksToObserve = parent.getElementsByClassName('*');
+
+    [...blocksToObserve].forEach((el: Element) => {
         if (inViewPort(el)) {
             result.push(el);
         }
     });
-    return result;
+
+   cb(result)
 };
 
-const debounce = (fn, delay) => {
-    let id;
-    return (...args) => {
-        const context = this;
-        clearTimeout(id);
-        id = setTimeout(() => {
-            fn.apply(context, args);
-        }, delay);
-    };
-};
 
 const debouncedDetect = debounce(detectInViewPort, 1000);
 
-const observeViewPort = (id: string): void => {
+
+// call on component mount
+const observeViewPort = (cb:CallableFunction,id: string): void => {
     if (typeof window !== 'undefined') {
-        window.addEventListener('scroll', () => debouncedDetect(id), false);
+        window.addEventListener('scroll', ()=>{
+            debouncedDetect(cb,id)
+        }, false);
     }
 };
 
+// call on cleanuop function
 const stopObserve = (): void => {
     window.removeEventListener('scroll', debouncedDetect, false);
 };
@@ -50,8 +51,20 @@ const stopObserve = (): void => {
 // test fn
 const test = (id) => console.log(id, 'Successfully imported and running');
 
+
+// pass parent div id 
+const useViewPortObserver=(callback:Function, id:string)=>{
+    if(typeof callback==="function" && id!==null){
+      observeViewPort(callback,id)
+    }
+
+}
+
+test(1)
+
 module.exports = {
     observeViewPort,
     stopObserve,
     test,
+    useViewPortObserver
 };
